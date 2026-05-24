@@ -1,0 +1,48 @@
+# General 5-Field Extraction Schema
+# Fallback schema for domains without a custom schema.
+# Agent can augment this with inferred domain-specific fields.
+
+schema_id: general_5fields
+domain: general
+description: >
+  Universal structured extraction for any academic paper.
+  Extract core bibliographic and research metadata.
+
+fields:
+  - name: Title
+    key: title
+    type: string
+    required: true
+
+  - name: Authors
+    key: authors
+    type: string
+    description: "First author et al. format"
+
+  - name: Year
+    key: year
+    type: integer
+
+  - name: Research Objective
+    key: objective
+    type: string
+    description: "One-sentence research goal or hypothesis"
+
+  - name: Method
+    key: method
+    type: string
+    description: "Key experimental or computational methodology"
+
+  - name: Key Finding
+    key: key_finding
+    type: string
+    description: "Primary result or conclusion"
+
+  - name: Limitations / Notes
+    key: notes
+    type: string
+    description: "Caveats, limitations, or noteworthy aspects"
+    placeholder: "-"
+
+# Note: this schema is intentionally minimal.
+# The Agent will dynamically add domain-specific fields during the planning phase.

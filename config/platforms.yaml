@@ -1,0 +1,211 @@
+# ScholarMine Platform Configuration (20 platforms)
+# Each platform has: API base, rate limits, PDF capability, priority
+
+platforms:
+  # ═══ TIER 1: Direct PDF Download ═══
+  arxiv:
+    name: "arXiv"
+    api_base: "https://export.arxiv.org/api/query"
+    pdf_base: "https://arxiv.org/pdf"
+    pdf_direct: true
+    rate_limit_rps: 1
+    max_results_per_query: 100
+    fields: [title, authors, abstract, doi, year, pdf_url, categories]
+    notes: "Free, no API key, bulk-friendly. Preferred for physics/CS/math."
+
+  pubmed_central:
+    name: "PubMed Central"
+    api_base: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+    pdf_base: "https://www.ncbi.nlm.nih.gov/pmc/articles"
+    pdf_direct: true
+    rate_limit_rps: 3
+    max_results_per_query: 200
+    fields: [title, authors, abstract, doi, year, pmcid, pdf_url, mesh_terms]
+    notes: "Requires API key (free). Best for biomedical/life sciences."
+
+  scihub:
+    name: "Sci-Hub"
+    api_base: null
+    pdf_direct: true
+    rate_limit_rps: 0.5
+    max_results_per_query: 1
+    fields: [doi, pdf_url]
+    mirrors: ["https://sci-hub.se", "https://sci-hub.st", "https://sci-hub.ru"]
+    notes: "DOI-based PDF retrieval. Cover ~85% of papers pre-2023. Use as fallback."
+
+  core:
+    name: "CORE"
+    api_base: "https://api.core.ac.uk/v3"
+    pdf_direct: true
+    rate_limit_rps: 5
+    max_results_per_query: 100
+    fields: [title, authors, abstract, doi, year, pdf_url, oa_status]
+    notes: "Largest OA aggregator. Requires free API key. Good for all disciplines."
+
+  chemrxiv:
+    name: "ChemRxiv / bioRxiv / medRxiv"
+    api_base: "https://api.chemrxiv.org"
+    pdf_direct: true
+    rate_limit_rps: 2
+    max_results_per_query: 50
+    fields: [title, authors, abstract, doi, year, pdf_url, category]
+    notes: "Preprint servers. All papers freely downloadable."
+
+  # ═══ TIER 2: Metadata + OA Link ═══
+  semantic_scholar:
+    name: "Semantic Scholar"
+    api_base: "https://api.semanticscholar.org/graph/v1"
+    pdf_direct: false
+    rate_limit_rps: 10
+    max_results_per_query: 100
+    fields: [title, authors, abstract, doi, year, citation_count, oa_url, tldr]
+    notes: "Free API, 200M+ papers. Excellent search + OA links. No PDF."
+
+  crossref:
+    name: "Crossref"
+    api_base: "https://api.crossref.org/works"
+    pdf_direct: false
+    rate_limit_rps: 50
+    max_results_per_query: 1000
+    fields: [title, authors, doi, year, journal, publisher, oa_link]
+    notes: "DOI registry. Polite pool. Best metadata source. No PDF."
+
+  openalex:
+    name: "OpenAlex"
+    api_base: "https://api.openalex.org/works"
+    pdf_direct: false
+    rate_limit_rps: 10
+    max_results_per_query: 200
+    fields: [title, authors, abstract, doi, year, oa_url, concepts, cited_by_count]
+    notes: "Microsoft Academic replacement. Rich concepts/institutions data."
+
+  pubmed:
+    name: "PubMed"
+    api_base: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+    pdf_direct: false
+    rate_limit_rps: 3
+    max_results_per_query: 200
+    fields: [title, authors, abstract, doi, year, pmid, pmcid, mesh_terms]
+    notes: "Abstracts + MeSH terms. PMC link when available."
+
+  unpaywall:
+    name: "Unpaywall"
+    api_base: "https://api.unpaywall.org/v2"
+    pdf_direct: false
+    rate_limit_rps: 10
+    max_results_per_query: 1
+    fields: [doi, oa_status, best_oa_url, journal]
+    notes: "DOI → OA PDF link resolver. Free. Single-DOI lookup."
+
+  doaj:
+    name: "DOAJ"
+    api_base: "https://doaj.org/api/v2"
+    pdf_direct: false
+    rate_limit_rps: 5
+    max_results_per_query: 100
+    fields: [title, journal, issn, apc, article_url]
+    notes: "Directory of Open Access Journals. 20K+ journals."
+
+  base_search:
+    name: "BASE"
+    api_base: "https://api.base-search.net"
+    pdf_direct: false
+    rate_limit_rps: 2
+    max_results_per_query: 120
+    fields: [title, authors, abstract, doi, year, oa_url]
+    notes: "Bielefeld Academic Search Engine. 300M+ documents."
+
+  datacite:
+    name: "DataCite"
+    api_base: "https://api.datacite.org/dois"
+    pdf_direct: false
+    rate_limit_rps: 10
+    max_results_per_query: 100
+    fields: [title, authors, doi, year, publisher, resource_type]
+    notes: "DOI metadata for datasets and papers."
+
+  # ═══ TIER 3: HTML Scraping (with caution) ═══
+  google_scholar:
+    name: "Google Scholar"
+    api_base: "https://scholar.google.com/scholar"
+    pdf_direct: false
+    rate_limit_rps: 0.2
+    max_results_per_query: 20
+    fields: [title, authors, snippet, year, citation_count, pdf_link]
+    notes: "Scraping only. Heavy anti-bot. Use proxies + delays. Best for discovery."
+
+  researchgate:
+    name: "ResearchGate"
+    api_base: "https://www.researchgate.net"
+    pdf_direct: false
+    rate_limit_rps: 0.5
+    max_results_per_query: 10
+    fields: [title, authors, doi, pdf_link]
+    notes: "Author self-archived PDFs. Scrape with caution."
+
+  scienceopen:
+    name: "ScienceOpen"
+    api_base: "https://www.scienceopen.com"
+    pdf_direct: false
+    rate_limit_rps: 1
+    max_results_per_query: 50
+    fields: [title, authors, doi, abstract, oa_link]
+    notes: "OA aggregator with collection feature."
+
+  paperity:
+    name: "Paperity"
+    api_base: "https://paperity.org"
+    pdf_direct: false
+    rate_limit_rps: 1
+    max_results_per_query: 50
+    fields: [title, authors, doi, journal, pdf_link]
+    notes: "OA aggregator. Multidisciplinary."
+
+  elsevier_oa:
+    name: "Elsevier OA"
+    api_base: "https://api.elsevier.com/content/search/sciencedirect"
+    pdf_direct: false
+    rate_limit_rps: 3
+    max_results_per_query: 25
+    fields: [title, authors, doi, abstract, oa_flag, pdf_link]
+    notes: "Requires API key. OA subset only."
+
+  springer_oa:
+    name: "Springer Nature OA"
+    api_base: "https://api.springernature.com/meta/v2"
+    pdf_direct: false
+    rate_limit_rps: 3
+    max_results_per_query: 25
+    fields: [title, authors, doi, abstract, oa_flag, pdf_link]
+    notes: "Requires API key. OA subset only."
+
+  wiley_oa:
+    name: "Wiley Online OA"
+    api_base: "https://api.wiley.com/onlinelibrary"
+    pdf_direct: false
+    rate_limit_rps: 2
+    max_results_per_query: 25
+    fields: [title, authors, doi, oa_flag, pdf_link]
+    notes: "OA subset. Requires scraping for full text."
+
+  acs_oa:
+    name: "ACS Publications OA"
+    api_base: "https://pubs.acs.org"
+    pdf_direct: false
+    rate_limit_rps: 2
+    max_results_per_query: 25
+    fields: [title, authors, doi, oa_flag, pdf_link]
+    notes: "ACS OA articles. Scrape with caution."
+
+# Search strategy configuration
+strategy:
+  # How to merge results from multiple platforms
+  dedup_key: doi                     # deduplicate by: doi | title_hash
+  dedup_fuzzy: true                  # also fuzzy-dedup by title similarity
+  prefer_sources:                    # when dedup conflicts, prefer this order
+    - arxiv
+    - pubmed_central
+    - semantic_scholar
+    - crossref
+  max_total: 5000                    # hard cap per crawl run
+  timeout_per_platform_secs: 300     # max time per platform

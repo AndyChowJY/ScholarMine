@@ -1,0 +1,114 @@
+# SAC (Single-Atom Catalyst) 15-Field Extraction Schema
+# Domain: single-atom / dual-atom / cluster catalysts
+# This is the schema observed in the Try-AI-Keyan-FindPapers output samples.
+
+schema_id: sac_15fields
+domain: heterogeneous catalysis
+description: >
+  Structured extraction for single-atom / dual-atom / nanoparticle catalyst papers.
+  Extracts catalyst identity, coordination environment, and performance metrics.
+
+fields:
+  - name: Source
+    key: source
+    type: string
+    description: "Source paper identifier (filename without extension)"
+    required: true
+
+  - name: DOI / Ref
+    key: doi_ref
+    type: string
+    description: "DOI or other unique reference identifier"
+    required: true
+
+  - name: Type
+    key: catalyst_type
+    type: categorical
+    description: "Catalyst type: SAC (single-atom), DAC (dual-atom), NP (nanoparticle), Cluster, Support, etc."
+    placeholder: "-"
+    required: true
+
+  - name: Metal
+    key: metal
+    type: string
+    description: "Active metal element(s), e.g. Pt, Fe, Ni, Ru, Au"
+    placeholder: "-"
+
+  - name: App.
+    key: application
+    type: string
+    description: "Application / reaction, e.g. CO2 electroreduction, OER, HER, NRR"
+    placeholder: "-"
+
+  - name: Substrate
+    key: substrate
+    type: string
+    description: "Substrate or support material, e.g. TiO2, MoS2, COF-205, NCNT"
+    placeholder: "-"
+
+  - name: Coordination
+    key: coordination
+    type: string
+    description: "First-shell coordination environment, e.g. Pt-O, Bi-N3S, Ru-N/O"
+    placeholder: "-"
+
+  - name: 2nd Shell
+    key: second_shell
+    type: string
+    description: "Second coordination shell or longer-range structure"
+    placeholder: "-"
+
+  - name: Ox. State
+    key: oxidation_state
+    type: string
+    description: "Oxidation state, e.g. +3.53, Au⁰/Auδ⁺, between Pt⁰ and Pt⁴⁺"
+    placeholder: "-"
+
+  - name: Coord. Evidence
+    key: coordination_evidence
+    type: string
+    description: "Characterization evidence for coordination, e.g. EXAFS, XANES, DFT calculations"
+    placeholder: "-"
+
+  - name: Support
+    key: support_material
+    type: string
+    description: "Support / carrier material details"
+    placeholder: "-"
+
+  - name: Loading (wt%)
+    key: loading_wt_pct
+    type: numeric_or_string
+    description: "Metal loading in weight percent"
+    placeholder: "-"
+
+  - name: Activity
+    key: activity
+    type: string
+    description: "Catalytic activity metric, e.g. FE, current density, TOF, mmol g⁻¹ h⁻¹"
+    placeholder: "-"
+
+  - name: Stability
+    key: stability
+    type: string
+    description: "Stability / durability metric, e.g. hours, cycles, retention %"
+    placeholder: "-"
+
+  - name: Key Notes
+    key: key_notes
+    type: string
+    description: "Free-text summary of key findings, unique features, or notable results"
+    placeholder: "-"
+
+# LLM prompt template for this schema
+prompt_template: |
+  You are a catalysis domain expert. Extract structured data from the following paper.
+  For each distinct catalyst system described, output ONE row with these fields filled:
+  {field_names}
+
+  Rules:
+  - If a field is not mentioned in the paper, use "-".
+  - One paper may produce multiple rows (different catalysts / conditions).
+  - Output as a JSON array of objects, one per row.
+  - Only include experimentally measured values; note if DFT-calculated.
+  - Use precise values from the text; do not invent or interpolate.

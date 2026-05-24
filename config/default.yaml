@@ -1,0 +1,109 @@
+# ScholarMine Default Configuration
+# All values can be overridden by environment variables or CLI flags.
+# Agent writes pipeline-specific overrides to workspace/pipeline_config.yaml at runtime.
+
+project:
+  name: ScholarMine
+  version: "0.1.0"
+
+# ── LLM Settings ────────────────────────────────────────────
+llm:
+  provider: deepseek              # deepseek | openai | anthropic
+  model: deepseek-chat            # deepseek-chat (V4-Flash) | deepseek-reasoner
+  base_url: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+  api_key: ${DEEPSEEK_API_KEY}
+  max_tokens: 8192
+  temperature: 0.1                # low for extraction accuracy
+  request_timeout_secs: 120
+  max_retries: 3
+
+# ── Agent Settings ──────────────────────────────────────────
+agent:
+  keyword_count: 25               # number of keywords to generate
+  keyword_mode: broad             # broad | focused | combined
+  auto_confirm: false             # skip preview confirmation (CLI --yes flag)
+  monitor_interval_secs: 30       # how often to check pipeline status
+
+# ── Crawler Settings ────────────────────────────────────────
+crawler:
+  max_papers: 1500                # default max papers per run
+  max_concurrent_downloads: 8     # parallel download limit
+  request_delay_secs: 1.0         # polite delay between requests to same host
+  timeout_secs: 30                # per-request timeout
+  user_agent: "ScholarMine/0.1 (mailto:scholar@example.com)"
+  # Platform priority order (top to bottom)
+  platforms:
+    tier1_direct_pdf:             # can get PDF directly
+      - arxiv
+      - pubmed_central
+      - scihub
+      - core
+      - chemrxiv
+    tier2_metadata_oa:            # metadata + OA link
+      - semantic_scholar
+      - crossref
+      - openalex
+      - pubmed
+      - unpaywall
+      - doaj
+      - base_search
+      - datacite
+    tier3_crawl_only:             # HTML scraping only
+      - google_scholar
+      - researchgate
+      - scienceopen
+      - paperity
+      - elsevier_oa
+      - springer_oa
+      - wiley_oa
+      - acs_oa
+  # Fallback chain: if tier1 fails, try tier2 metadata, then tier3
+  fallback_strategy: cascade
+
+# ── Filter Settings ─────────────────────────────────────────
+filter:
+  enabled: true
+  min_pdf_pages: 2                # reject PDFs with fewer pages
+  max_pdf_size_mb: 100            # reject oversized PDFs
+  content_relevance_threshold: 0.5  # LLM-based relevance score cutoff
+  auto_reject_patterns:           # regex patterns for auto-rejection
+    - "(?i)corrigendum|erratum|retraction"
+    - "(?i)table of contents|front matter"
+    - "(?i)cover image|graphical abstract only"
+  classification:
+    accepted_dir: "accepted"
+    rejected_dir: "rejected"
+    rejected_subdirs:             # secondary classification for rejects
+      - "irrelevant"
+      - "corrupted"
+      - "duplicate"
+      - "no_experimental_data"
+
+# ── Extraction Settings ─────────────────────────────────────
+extraction:
+  chars_per_paper: 100000         # ~10万字符正文 (excluding references)
+  batch_size: 40                  # papers per LLM batch (40-50 for 1M context)
+  max_output_tokens: 128000       # LLM max output
+  strip_references: true          # remove reference sections before extraction
+  pdf_engine: pymupdf             # pymupdf | pdfplumber
+  fallback_on_empty: retry_once   # what to do when paper text < 1000 chars
+
+# ── Output Settings ─────────────────────────────────────────
+output:
+  md_dir: "output/md"             # per-paper Markdown files
+  csv_path: "output/summary.csv"  # aggregated CSV
+  raw_llm_dir: "extracted/llm_raw" # raw LLM JSONL responses
+  encoding: "utf-8"
+  csv_delimiter: ","
+  placeholder: "-"                # value used for missing fields
+
+# ── Logging ─────────────────────────────────────────────────
+logging:
+  level: INFO                     # DEBUG | INFO | WARNING | ERROR
+  dir: "logs"
+  per_paper_logs: true            # create individual per-paper extraction logs
+  rotate_days: 30
+
+# ── Workspace (set at runtime by Agent) ─────────────────────
+workspace:
+  root: null                      # overridden per pipeline run

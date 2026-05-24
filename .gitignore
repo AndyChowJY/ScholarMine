@@ -1,0 +1,42 @@
+# Environment secrets
+.env
+config.local.yaml
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project data (large / reproducible)
+downloads/
+output/
+logs/
+extracted/
+papers/
+accepted/
+rejected/
+*.pdf
+!tests/fixtures/*.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Checkpoints (runtime state — can be large)
+*.checkpoint.json
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
